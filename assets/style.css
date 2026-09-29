@@ -314,3 +314,20 @@ footer .legal { margin-top: 28px; padding-top: 20px; border-top: 1px solid var(-
 .hero h1 em { white-space: nowrap; }
 @media (max-width: 1100px) { .contacts { grid-template-columns: repeat(3, 1fr); } }
 @media (max-width: 640px) { .contacts { grid-template-columns: 1fr 1fr; } }
+
+/* 窄屏适配：网格子项允许收缩，长按钮文字可换行，避免撑出横向滚动 */
+.grid > * { min-width: 0; }
+.price .btn, .contact em { white-space: normal; text-align: center; }
+@media (max-width: 640px) {
+  .price .amt { font-size: 40px; }
+  .card { padding: 22px; }
+}
+/* 小屏手机（iPhone SE / 小尺寸安卓）：底部常驻栏已有注册按钮，顶栏只保留 logo 与语言切换 */
+@media (max-width: 380px) {
+  .nav .btn-primary { display: none; }
+  .brand { font-size: 17px; gap: 8px; }
+  .brand svg { width: 26px; height: 26px; }
+  .hero h1 { font-size: 30px; }
+  .stat b { font-size: 28px; }
+  .contacts { grid-template-columns: 1fr; }
+}

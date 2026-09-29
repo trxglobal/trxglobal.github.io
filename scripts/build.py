@@ -2,7 +2,10 @@
 """站点构建脚本（在仓库根目录执行：python3 scripts/build.py）
 
 1. 把语言切换器渲染进 index.html、en/index.html（替换 <!-- lsw --> 与 <!-- /lsw --> 之间的内容）；
-2. 由简体页生成繁体页：index.html → zh-hant/index.html，privacy.html → zh-hant/privacy.html。
+2. 把 assets/style.css、assets/main.js 内联进每个页面（<!-- css -->、<!-- js --> 标记处）。
+   GitHub Pages 对 HTML 和资源各缓存 10 分钟，且忽略 ?v= 参数；外链时访客可能拿到旧 HTML + 新 CSS，
+   页面错乱。内联后每个页面自带匹配的样式和脚本，彻底避免这种错配；
+3. 由简体页生成繁体页：index.html → zh-hant/index.html，privacy.html → zh-hant/privacy.html。
 
 依赖：pip install opencc-python-reimplemented
 简体页是繁体页唯一的源文件，繁体页不要手改；改完简体或切换器后重新运行本脚本即可。
@@ -23,8 +26,6 @@ LANG_NAME = {"zh-CN": "简体中文", "zh-Hant": "繁體中文", "en": "English"
 REGIONS = [
     ("hk", "Hong Kong SAR", ["en", "zh-CN", "zh-Hant"]),
     ("us", "United States", ["en"]),
-    ("gb", "United Kingdom", ["en"]),
-    ("ca", "Canada", ["en"]),
     ("cn", "Chinese Mainland", ["zh-CN"]),
 ]
 # 没有记住地区时，各语言页默认显示的地区；访客在下拉里选过地区后由 main.js 按记忆切换
@@ -60,6 +61,13 @@ def render_switcher(lang: str) -> str:
 
 def inject_switcher(html: str, lang: str) -> str:
     return re.sub(r"<!-- lsw -->.*?<!-- /lsw -->", lambda _: f"<!-- lsw -->{render_switcher(lang)}<!-- /lsw -->", html, flags=re.S)
+
+
+def inject_assets(html: str) -> str:
+    css = (ROOT / "assets/style.css").read_text(encoding="utf-8").strip()
+    js = (ROOT / "assets/main.js").read_text(encoding="utf-8").strip()
+    html = re.sub(r"<!-- css -->.*?<!-- /css -->", lambda _: f"<!-- css --><style>\n{css}\n</style><!-- /css -->", html, flags=re.S)
+    return re.sub(r"<!-- js -->.*?<!-- /js -->", lambda _: f"<!-- js --><script>\n{js}\n</script><!-- /js -->", html, flags=re.S)
 
 
 # ── 简体 → 繁体 ──
@@ -115,15 +123,19 @@ def localize(html: str, page: str) -> str:
     html = html.replace('href="/zh-hant/" hreflang="zh-CN"', 'href="/" hreflang="zh-CN"')
     html = html.replace(' lang="zh-CN" aria-current="page"', ' lang="zh-CN"')
     html = html.replace('hreflang="zh-Hant" lang="zh-Hant">', 'hreflang="zh-Hant" lang="zh-Hant" aria-current="page">')
-    # 切换器在转换之后重新渲染，避免地区名、语言名被转换
-    return inject_switcher(html, "zh-Hant")
+    # 切换器与内联资源在转换之后重新写入，避免被简繁转换改动
+    return inject_assets(inject_switcher(html, "zh-Hant"))
 
 
 def main():
-    for page, lang in [("index.html", "zh-CN"), ("en/index.html", "en")]:
+    pages = {"index.html": "zh-CN", "en/index.html": "en", "privacy.html": None, "en/privacy.html": None, "404.html": None}
+    for page, lang in pages.items():
         path = ROOT / page
-        path.write_text(inject_switcher(path.read_text(encoding="utf-8"), lang), encoding="utf-8")
-        print(f"更新切换器 {page}")
+        html = path.read_text(encoding="utf-8")
+        if lang:
+            html = inject_switcher(html, lang)
+        path.write_text(inject_assets(html), encoding="utf-8")
+        print(f"更新 {page}")
 
     out_dir = ROOT / "zh-hant"
     out_dir.mkdir(exist_ok=True)
