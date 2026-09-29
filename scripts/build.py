@@ -17,6 +17,17 @@ from opencc import OpenCC
 
 ROOT = Path(__file__).resolve().parent.parent
 BASE = "https://trxglobal.github.io"
+# Google Ads 全站代码（gtag.js），写在每个页面 <head> 最前面；改 ID 时同步 assets/main.js 的 CONFIG.adsId
+GTAG_ID = "AW-18481729310"
+GTAG = f"""<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id={GTAG_ID}"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){{dataLayer.push(arguments);}}
+  gtag('js', new Date());
+
+  gtag('config', '{GTAG_ID}');
+</script>"""
 cc = OpenCC("s2tw")
 
 # ── 语言切换器（仿 PhotonPay：按地区分组，圆形国旗 + 地区名 + 可选语言）──
@@ -64,6 +75,10 @@ def inject_switcher(html: str, lang: str) -> str:
 
 
 def inject_assets(html: str) -> str:
+    # 首次构建时在 <head> 后插入 gtag 占位标记
+    if "<!-- gtag -->" not in html:
+        html = html.replace("<head>\n", "<head>\n<!-- gtag --><!-- /gtag -->\n", 1)
+    html = re.sub(r"<!-- gtag -->.*?<!-- /gtag -->", lambda _: f"<!-- gtag -->\n{GTAG}\n<!-- /gtag -->", html, flags=re.S)
     css = (ROOT / "assets/style.css").read_text(encoding="utf-8").strip()
     js = (ROOT / "assets/main.js").read_text(encoding="utf-8").strip()
     html = re.sub(r"<!-- css -->.*?<!-- /css -->", lambda _: f"<!-- css --><style>\n{css}\n</style><!-- /css -->", html, flags=re.S)

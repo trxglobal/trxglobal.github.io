@@ -1,6 +1,17 @@
 <!doctype html>
 <html lang="en">
 <head>
+<!-- gtag -->
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=AW-18481729310"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'AW-18481729310');
+</script>
+<!-- /gtag -->
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>TRON Energy Rental · Cut USDT-TRC20 Fees by up to 80% | TRX Global</title>
@@ -767,12 +778,13 @@ footer .legal { margin-top: 28px; padding-top: 20px; border-top: 1px solid var(-
 /*
  * 落地页脚本：
  * 1. 把广告带来的 gclid / utm_* 等参数透传到 trxapi.io 的外链上，方便在目标站做来源归因；
- * 2. 点击注册 / 登录按钮时上报 Google Ads 转化（需在下方 CONFIG 填入转化 ID 与标签）。
+ * 2. 点击注册 / 登录 / 联系渠道时上报 Google Ads 转化（需在下方 CONFIG 填入转化标签）。
+ * gtag.js 由 scripts/build.py 写在每个页面 <head> 最前面（ID 见 build.py 的 GTAG_ID），这里只负责上报事件。
  */
 (function () {
   var CONFIG = {
-    // Google Ads 转化 ID，形如 "AW-123456789"；留空则不加载 gtag
-    adsId: "",
+    // Google Ads 转化 ID，须与 build.py 的 GTAG_ID 一致
+    adsId: "AW-18481729310",
     // 转化标签，在 Google Ads「目标 → 转化」里创建后获得，形如 "AbCdEfGhIjKlMn"
     registerLabel: "",
     loginLabel: "",
@@ -842,16 +854,7 @@ footer .legal { margin-top: 28px; padding-top: 20px; border-top: 1px solid var(-
     a.href = url.toString();
   });
 
-  if (!CONFIG.adsId) return;
-
-  var s = document.createElement("script");
-  s.async = true;
-  s.src = "https://www.googletagmanager.com/gtag/js?id=" + CONFIG.adsId;
-  document.head.appendChild(s);
-  window.dataLayer = window.dataLayer || [];
-  window.gtag = function () { dataLayer.push(arguments); };
-  gtag("js", new Date());
-  gtag("config", CONFIG.adsId);
+  if (!CONFIG.adsId || typeof window.gtag !== "function") return;
 
   document.addEventListener("click", function (e) {
     var c = e.target.closest && e.target.closest("a[data-contact]");

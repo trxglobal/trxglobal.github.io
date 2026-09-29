@@ -26,18 +26,19 @@ python3 scripts/build.py
 
 语言切换器仿 PhotonPay 按地区分组，地区与语言的对应关系在 `scripts/build.py` 的 `REGIONS` 中配置。页面里 `<!-- lsw -->…<!-- /lsw -->` 之间的内容由脚本生成，不要手改。
 
-## 接入 Google Ads 转化跟踪
+## Google Ads
 
-编辑 `assets/main.js` 顶部的 `CONFIG`：
+全站代码（`AW-18481729310`）由 `scripts/build.py` 写在每个页面 `<head>` 的最前面，ID 配置在 `GTAG_ID`。
+
+转化标签在 `assets/main.js` 顶部的 `CONFIG` 中填写，改完后运行 `python3 scripts/build.py`：
 
 ```js
-adsId: "AW-XXXXXXXXX",       // 转化 ID
 registerLabel: "xxxxxxxx",   // 「点击注册」转化标签
 loginLabel: "xxxxxxxx",      // 「点击登录」转化标签（可留空）
 contactLabel: "xxxxxxxx"     // 「点击联系渠道」转化标签（可留空）
 ```
 
-留空时不会加载任何 Google 脚本。所有带 `data-out` 属性的链接，都会自动附加来源参数（`gclid`、`utm_*`）后再跳转到 trxapi.io。
+所有带 `data-out` 属性的链接，都会自动附加来源参数（`gclid`、`utm_*`）后再跳转到 trxapi.io。
 
 ## 为什么样式和脚本是内联的
 
