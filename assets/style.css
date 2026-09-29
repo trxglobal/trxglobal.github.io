@@ -45,29 +45,55 @@ img, svg { display: block; }
 .nav-links a:hover { color: var(--text); }
 .nav-cta { margin-left: auto; display: flex; gap: 10px; align-items: center; }
 
-/* 语言切换（参考 PhotonPay：地球图标 + 当前语言全称，下拉用各语言母语书写） */
+/* 语言切换：还原 PhotonPay —— 圆形国旗 + 当前语言，悬停展开，按地区分组列出可选语言 */
 .lsw { position: relative; }
-.lsw summary {
-  list-style: none; cursor: pointer; display: flex; align-items: center; gap: 6px;
-  padding: 8px 12px; border-radius: 999px; color: var(--muted); font-size: 14px; font-weight: 500; user-select: none;
+.lsw-btn {
+  display: flex; align-items: center; height: 44px; padding: 0 16px; border: 0; border-radius: 12px;
+  background: transparent; color: var(--text); font: inherit; font-size: 14px; font-weight: 500; cursor: pointer;
+  transition: background .2s;
 }
-.lsw summary::-webkit-details-marker { display: none; }
-.lsw summary:hover, .lsw[open] summary { color: var(--text); background: var(--bg-2); }
-.lsw svg.g { width: 18px; height: 18px; }
-.lsw svg.c { width: 14px; height: 14px; transition: transform .15s ease; }
-.lsw[open] svg.c { transform: rotate(180deg); }
-.lsw ul {
-  position: absolute; right: 0; top: calc(100% + 8px); min-width: 176px; margin: 0; padding: 6px;
-  list-style: none; background: #fff; border: 1px solid var(--line); border-radius: 14px;
-  box-shadow: 0 16px 40px rgba(17, 17, 20, .12);
+.lsw.open .lsw-btn { background: rgba(229, 17, 45, .08); }
+.lsw .flag { width: 24px; height: 24px; border-radius: 50%; object-fit: cover; flex: none; box-shadow: 0 0 0 1px rgba(0, 0, 0, .06); }
+.lsw-btn .flag { margin-right: 8px; }
+.lsw-btn .lbl { margin-right: 8px; white-space: nowrap; }
+.lsw-btn svg.c { width: 14px; height: 14px; transition: transform .2s; }
+.lsw.open svg.c { transform: rotate(180deg); }
+/* 面板与按钮之间留 10px 透明区，鼠标移过去时不会断开悬停 */
+.lsw-pop {
+  position: absolute; top: 100%; left: 50%; padding-top: 10px; z-index: 30;
+  visibility: hidden; opacity: 0; transform: translate(-50%, 4px); transition: opacity .2s, transform .2s, visibility .2s;
 }
-.lsw li a {
-  display: flex; justify-content: space-between; align-items: center; gap: 12px;
-  padding: 10px 12px; border-radius: 10px; text-decoration: none; font-size: 14px; color: var(--muted);
+.lsw.open .lsw-pop { visibility: visible; opacity: 1; transform: translate(-50%, 0); }
+/* 有鼠标的设备悬停即展开（同 PhotonPay）；触屏设备靠点击切换 .open */
+@media (hover: hover) {
+  .lsw:hover .lsw-btn { background: rgba(229, 17, 45, .08); }
+  .lsw:hover svg.c { transform: rotate(180deg); }
+  .lsw:hover .lsw-pop { visibility: visible; opacity: 1; transform: translate(-50%, 0); }
 }
-.lsw li a:hover { background: var(--bg-2); color: var(--text); }
-.lsw li a[aria-current] { color: var(--text); font-weight: 600; }
-.lsw li a[aria-current]::after { content: "✓"; color: var(--accent); }
+.lsw-pop ul {
+  position: relative; width: 276px; margin: 0; padding: 24px; list-style: none;
+  display: flex; flex-direction: column; gap: 16px;
+  background: #fff; border: 1px solid #ebeef5; border-radius: 12px; box-shadow: 0 0 12px rgba(0, 0, 0, .12);
+}
+.lsw-pop ul::before {
+  content: ""; position: absolute; top: -6px; left: calc(50% - 5px); width: 10px; height: 10px;
+  background: #fff; border-left: 1px solid #ebeef5; border-top: 1px solid #ebeef5; transform: rotate(45deg);
+}
+.lsw-pop li {
+  display: flex; align-items: center; min-height: 52px; padding: 4px 0 4px 8px; border-radius: 12px;
+  cursor: pointer; transition: background .2s;
+}
+.lsw-pop li:hover { background: rgba(0, 0, 0, .04); }
+.lsw-pop li .flag { margin-right: 8px; }
+.lsw-pop .rn { padding-left: 8px; font-size: 14px; font-weight: 500; line-height: 22px; color: var(--text); }
+.lsw-pop .rl { display: flex; align-items: center; white-space: nowrap; }
+.lsw-pop .rl a {
+  padding: 0 8px; font-size: 12px; font-weight: 500; line-height: 18px; text-decoration: none;
+  color: rgba(17, 17, 20, .55); transition: color .2s;
+}
+.lsw-pop .rl a:hover { color: var(--text); }
+.lsw-pop .rl a.on { color: var(--accent); }
+.lsw-pop .rl i { width: 1px; height: 8px; background: rgba(0, 0, 0, .15); }
 
 /* 按钮：胶囊形 */
 .btn {
@@ -248,7 +274,11 @@ footer .legal { margin-top: 28px; padding-top: 20px; border-top: 1px solid var(-
   section { padding: 60px 0; }
   .nav .btn-ghost { display: none; }
   .nav-cta { gap: 4px; }
-  .lsw .lbl { display: none; }
+  .lsw-btn { padding: 0 10px; }
+  .lsw-btn .lbl { display: none; }
+  .lsw-pop, .lsw.open .lsw-pop, .lsw:hover .lsw-pop { position: fixed; top: 68px; left: 16px; right: 16px; padding-top: 6px; transform: none; }
+  .lsw-pop ul { width: auto; }
+  .lsw-pop ul::before { display: none; }
   .hero-cta .btn { flex: 1 1 100%; }
   .hero-art::before { inset: 0 -16px; border-radius: 24px; }
   .chip-a { left: 4px; }

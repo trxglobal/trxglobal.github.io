@@ -14,13 +14,17 @@
 - `zh-hant/`：繁体中文，由脚本生成，**不要手改**
 - `en/`：英文，单独维护
 - `assets/style.css`、`assets/main.js`：共用样式与脚本
+- `assets/flags/`：语言切换器用的国旗（来自 [flag-icons](https://github.com/lipis/flag-icons)，MIT 许可）
+- `scripts/build.py`：渲染语言切换器、由简体生成繁体
 
-## 修改简体后同步繁体
+## 修改页面后重新构建
 
 ```bash
 pip install opencc-python-reimplemented
-python3 scripts/gen_hant.py
+python3 scripts/build.py
 ```
+
+语言切换器仿 PhotonPay 按地区分组，地区与语言的对应关系在 `scripts/build.py` 的 `REGIONS` 中配置。页面里 `<!-- lsw -->…<!-- /lsw -->` 之间的内容由脚本生成，不要手改。
 
 ## 接入 Google Ads 转化跟踪
 
@@ -37,4 +41,4 @@ contactLabel: "xxxxxxxx"     // 「点击联系渠道」转化标签（可留空
 
 ## 修改样式或脚本后
 
-GitHub Pages 会把静态资源缓存 10 分钟。改了 `assets/style.css` 或 `assets/main.js` 之后，要把各 HTML 中的 `?v=3` 统一加 1（例如改成 `?v=4`），再运行 `scripts/gen_hant.py`。否则访客可能拿到新页面，却套用旧样式。
+GitHub Pages 会把静态资源缓存 10 分钟。改了 `assets/style.css` 或 `assets/main.js` 之后，要把各 HTML 中的 `?v=N` 统一加 1，再运行 `scripts/build.py`。否则访客可能拿到新页面，却套用旧样式。

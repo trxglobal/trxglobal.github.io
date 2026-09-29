@@ -14,15 +14,41 @@
     contactLabel: ""
   };
 
-  // 语言下拉：点击页面其他位置或按 Esc 时收起
-  document.addEventListener("click", function (e) {
-    document.querySelectorAll("details.lsw[open]").forEach(function (d) {
-      if (!d.contains(e.target)) d.removeAttribute("open");
+  // 语言切换：点击按钮展开（触屏设备）；点击页面其他位置或按 Esc 收起
+  var lsw = document.querySelector(".lsw");
+  if (lsw) {
+    var btn = lsw.querySelector(".lsw-btn");
+    var setOpen = function (open) {
+      lsw.classList.toggle("open", open);
+      btn.setAttribute("aria-expanded", open ? "true" : "false");
+    };
+    btn.addEventListener("click", function () { setOpen(!lsw.classList.contains("open")); });
+    document.addEventListener("click", function (e) { if (!lsw.contains(e.target)) setOpen(false); });
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape") setOpen(false); });
+
+    // 同一语言可能属于多个地区（如 English 对应香港 / 美国 / 英国 / 加拿大），
+    // 记住访客选的地区，下次打开时按钮显示对应国旗，并高亮该地区下的当前语言
+    var REGION_KEY = "trxg_region";
+    var pageLang = lsw.getAttribute("data-lang");
+    lsw.addEventListener("click", function (e) {
+      var link = e.target.closest("a[data-region]");
+      var row = e.target.closest("li[data-region]");
+      if (!link && row) link = row.querySelector("a[data-region]"); // 点整行等同于点该地区第一个语言
+      if (!link) return;
+      try { localStorage.setItem(REGION_KEY, link.getAttribute("data-region")); } catch (err) {}
+      if (link !== e.target) location.href = link.href;
     });
-  });
-  document.addEventListener("keydown", function (e) {
-    if (e.key === "Escape") document.querySelectorAll("details.lsw[open]").forEach(function (d) { d.removeAttribute("open"); });
-  });
+    var saved = null;
+    try { saved = localStorage.getItem(REGION_KEY); } catch (err) {}
+    var match = saved && lsw.querySelector('a[data-region="' + saved + '"][lang="' + pageLang + '"]');
+    if (match) {
+      var cur = lsw.querySelector(".rl a.on");
+      if (cur) { cur.classList.remove("on"); cur.removeAttribute("aria-current"); }
+      match.classList.add("on");
+      match.setAttribute("aria-current", "page");
+      btn.querySelector(".flag").src = "/assets/flags/" + saved + ".svg";
+    }
+  }
 
   var PASS_KEYS = ["gclid", "gbraid", "wbraid", "utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content"];
   var STORE_KEY = "trxg_attr";
