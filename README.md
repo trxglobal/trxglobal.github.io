@@ -34,3 +34,7 @@ contactLabel: "xxxxxxxx"     // 「点击联系渠道」转化标签（可留空
 ```
 
 留空时不会加载任何 Google 脚本。所有带 `data-out` 属性的链接，都会自动附加来源参数（`gclid`、`utm_*`）后再跳转到 trxapi.io。
+
+## 修改样式或脚本后
+
+GitHub Pages 会把静态资源缓存 10 分钟。改了 `assets/style.css` 或 `assets/main.js` 之后，要把各 HTML 中的 `?v=3` 统一加 1（例如改成 `?v=4`），再运行 `scripts/gen_hant.py`。否则访客可能拿到新页面，却套用旧样式。
