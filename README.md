@@ -29,7 +29,8 @@ python3 scripts/gen_hant.py
 ```js
 adsId: "AW-XXXXXXXXX",       // 转化 ID
 registerLabel: "xxxxxxxx",   // 「点击注册」转化标签
-loginLabel: "xxxxxxxx"       // 「点击登录」转化标签（可留空）
+loginLabel: "xxxxxxxx",      // 「点击登录」转化标签（可留空）
+contactLabel: "xxxxxxxx"     // 「点击联系渠道」转化标签（可留空）
 ```
 
 留空时不会加载任何 Google 脚本。所有带 `data-out` 属性的链接，都会自动附加来源参数（`gclid`、`utm_*`）后再跳转到 trxapi.io。

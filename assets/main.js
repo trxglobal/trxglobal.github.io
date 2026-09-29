@@ -9,7 +9,9 @@
     adsId: "",
     // 转化标签，在 Google Ads「目标 → 转化」里创建后获得，形如 "AbCdEfGhIjKlMn"
     registerLabel: "",
-    loginLabel: ""
+    loginLabel: "",
+    // 点击任一联系渠道（Telegram / WhatsApp / 在线客服等）的转化标签，可留空
+    contactLabel: ""
   };
 
   // 语言下拉：点击页面其他位置或按 Esc 时收起
@@ -60,6 +62,12 @@
   gtag("config", CONFIG.adsId);
 
   document.addEventListener("click", function (e) {
+    var c = e.target.closest && e.target.closest("a[data-contact]");
+    if (c) {
+      // 联系渠道都在新标签页打开，直接上报即可，不影响跳转
+      if (CONFIG.contactLabel) gtag("event", "conversion", { send_to: CONFIG.adsId + "/" + CONFIG.contactLabel });
+      return;
+    }
     var a = e.target.closest && e.target.closest("a[data-out]");
     if (!a) return;
     var label = a.dataset.out === "register" ? CONFIG.registerLabel : CONFIG.loginLabel;
