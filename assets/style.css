@@ -12,7 +12,6 @@
   --ok: #10a36a;
   --ok-soft: #e7f7f0;
   --bad: #d7263d;
-  --dark: #111114;
   --shadow: 0 1px 2px rgba(17, 17, 20, .04), 0 8px 24px rgba(17, 17, 20, .06);
   --radius: 20px;
   --max: 1160px;
@@ -81,8 +80,8 @@ img, svg { display: block; }
 .btn:hover { transform: translateY(-1px); }
 .btn-primary { background: var(--accent); color: #fff; }
 .btn-primary:hover { background: var(--accent-d); }
-.btn-ghost { border-color: var(--dark); color: var(--dark); background: transparent; }
-.btn-ghost:hover { background: var(--dark); color: #fff; }
+.btn-ghost { border-color: var(--accent); color: var(--accent); background: #fff; }
+.btn-ghost:hover { background: var(--accent-soft); }
 .btn-lg { padding: 15px 30px; font-size: 17px; }
 
 /* 首屏 */
@@ -156,10 +155,11 @@ section:not(.alt) .card { box-shadow: none; background: var(--bg-2); border-colo
 .compare ul { list-style: none; padding: 0; margin: 14px 0 0; }
 .compare li { position: relative; padding-left: 26px; color: var(--muted); font-size: 15px; margin: 10px 0; }
 .compare li::before { position: absolute; left: 0; top: 0; font-weight: 700; }
-.compare .bad li::before { content: "✕"; color: #a0a3ad; }
-.compare .good { background: var(--dark); color: #fff; border-color: var(--dark); }
-.compare .good li { color: #c9cad1; }
-.compare .good li::before { content: "✓"; color: #ff5a6e; }
+.compare .bad li::before { content: "✕"; color: #c4c6cd; }
+.compare .good { background: linear-gradient(145deg, var(--accent), #ff4d62); color: #fff; border-color: transparent; box-shadow: 0 16px 40px rgba(229, 17, 45, .25); }
+.compare .good li { color: rgba(255, 255, 255, .92); }
+.compare .good li::before { content: "✓"; color: #fff; }
+.compare .good .tag { background: #fff; color: var(--accent); }
 .tag { display: inline-block; font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 999px; background: var(--accent); color: #fff; }
 
 /* 价格 */
@@ -198,17 +198,20 @@ section:not(.alt) .card { box-shadow: none; background: var(--bg-2); border-colo
 .faq details[open] summary::after { content: "−"; }
 .faq details p { margin: 0; padding: 0 24px 20px; color: var(--muted); }
 
-/* 底部 CTA：深色块收尾 */
+/* 底部 CTA：红色块收尾 */
 .final { text-align: center; }
 .final .box {
   border-radius: 32px; padding: 72px 24px; color: #fff;
-  background: radial-gradient(700px 300px at 50% 0%, rgba(229, 17, 45, .45), transparent 70%), var(--dark);
+  background: radial-gradient(600px 280px at 85% 0%, rgba(255, 255, 255, .18), transparent 70%), linear-gradient(135deg, var(--accent), #ff4d62);
 }
 .final h2 { font-size: clamp(28px, 4vw, 44px); margin: 0 0 12px; font-weight: 800; letter-spacing: -.6px; }
-.final p { color: #c9cad1; margin: 0 0 30px; font-size: 17px; }
+.final p { color: rgba(255, 255, 255, .9); margin: 0 0 30px; font-size: 17px; }
 .final .hero-cta { justify-content: center; }
-.final .btn-ghost { border-color: #fff; color: #fff; }
-.final .btn-ghost:hover { background: #fff; color: var(--dark); }
+.final .btn-primary { background: #fff; color: var(--accent); }
+.final .btn-primary:hover { background: #fff5f6; }
+.final .btn-ghost { border-color: #fff; color: #fff; background: transparent; }
+.final .btn-ghost:hover { background: rgba(255, 255, 255, .14); }
+.final .hero-note, .final .hero-note a { color: rgba(255, 255, 255, .92) !important; }
 
 /* 页脚 */
 footer { border-top: 1px solid var(--line); padding: 48px 0 96px; color: var(--muted); font-size: 14px; }
